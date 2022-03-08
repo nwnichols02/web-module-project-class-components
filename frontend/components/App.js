@@ -1,7 +1,6 @@
 import React from "react";
 import ToDoList from "./TodoList";
-import Form from './Form';
-
+import Form from "./Form";
 
 export default class App extends React.Component {
   constructor() {
@@ -15,17 +14,52 @@ export default class App extends React.Component {
     };
   }
 
+  handleClear = () => {
+    this.setState({
+      ...this.state,
+      todos: this.state.todos.filter((todo) => {
+        return todo.completed === false;
+      }),
+    });
+  };
+
+  handleAdd = (task) => {
+    const newTodo = {
+      task: task,
+      id: Date.now(),
+      completed: false,
+    }
+
+    this.setState({
+      ...this.state,
+      todos: [...this.state.todos, newTodo]
+    })
+  }
+
+  handleToggle = (clickedId) => {
+
+    this.setState({
+      ...this.state,
+      todos: this.state.todos.map((todo) => {
+        if(todo.id === clickedId){
+          return {
+            ...todo,
+            completed: !todo.completed
+          }
+        } 
+        return todo;
+      })
+    })
+  }
+
   render() {
-    console.log("props are", this.props);
-    console.log("state is", this.state);
     const { todos } = this.state;
     return (
       <div>
         <h2>Todo List:</h2>
-        <p>Click a task to remove</p>
-        <ToDoList todos={todos}/>
-        <Form/>
-        <button>Clear</button>
+        <ToDoList handleToggle={this.handleToggle} todos={todos} />
+        <Form handleAdd={this.handleAdd}/>
+        <button onClick={this.handleClear}>Clear</button>
       </div>
     );
   }
